@@ -1,0 +1,125 @@
+@model IdentityFromScratch.Models.OneTimePasscode;
+
+@{
+    ViewBag.Title = "2FA";
+}
+
+@section Styles {
+<style xmlns="http://www.w3.org/1999/html">
+
+    .otp-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .otp-box {
+        width: 50px;
+        height: 50px;
+        margin: 0 5px;
+        text-align: center;
+        font-size: 24px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        outline: none;
+        transition: border-color 0.3s ease;
+    }
+
+    .otp-box:focus {
+        border-color: #007BFF;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    .otp-box::-webkit-inner-spin-button,
+    .otp-box::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .otp-box {
+        -moz-appearance: textfield;
+    }
+
+</style>
+}
+
+<script type="text/javascript">
+        $(document).ready(function () {
+        $('#resend-otp-link').click(function () {
+        
+            var phoneNumber = '@Model.PhoneNumber.Trim('+')'; 
+
+            $.ajax({
+                url: '@Url.Action("Resend", "Account")',
+                type: 'POST',
+                data: {
+                    phoneNumber: phoneNumber
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $('#otp1, #otp2, #otp3, #otp4, #otp5, #otp6').val('');
+                        var futureDate = new Date();
+                        futureDate.setMinutes(futureDate.getMinutes() + 10);
+                        var futureDateString = futureDate.toISOString();
+                        $('#OTPExpiryTime').val(futureDateString);
+
+                        const validationSummaryDiv = document.getElementById('validationSummary');
+
+                        if (validationSummaryDiv) { 
+                            validationSummaryDiv.remove();
+                        }
+
+
+                        alert('SMS resent successfully!');
+                    } else {
+                        alert('Failed to resend SMS.');
+                    }
+                },
+                error: function () {
+                    alert('Error occurred while resending SMS.');
+                }
+            });
+        });
+    });
+    </script>
+
+<div class="col-md-4 offset-md-4">
+    <h2>Please Authenticate</h2>
+    <p>A One Time Passcode (OTP) has been sent to your phone.</p>
+    <p>This will expire after 10 minutes.</p>
+    <p>Enter or paste the OTP below to login.</p>
+    <div class="card card-body bg-light">
+        <form method="post">
+
+            <div id="validationSummary" asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <input id="OTPExpiryTime"
+                   name="OTPExpiryTime"
+                   type="hidden"
+                   value=@Model.OTPExpiry />
+
+            <div class="otp-container">
+                <input type="text" maxlength="1" class="otp-box" asp-for="otp1" id="otp1"/>
+                <input type="text" maxlength="1" class="otp-box" asp-for="otp2" id="otp2"/>
+                <input type="text" maxlength="1" class="otp-box" asp-for="otp3" id="otp3"/>
+                <input type="text" maxlength="1" class="otp-box" asp-for="otp4" id="otp4"/>
+                <input type="text" maxlength="1" class="otp-box" asp-for="otp5" id="otp5"/>
+                <input type="text" maxlength="1" class="otp-box" asp-for="otp6" id="otp6"/>
+            </div>
+            <span asp-validation-for="otp1" class="text-danger"></span>
+            <span asp-validation-for="otp2" class="text-danger"></span>
+            <span asp-validation-for="otp3" class="text-danger"></span>
+            <span asp-validation-for="otp4" class="text-danger"></span>
+            <span asp-validation-for="otp5" class="text-danger"></span>
+            <span asp-validation-for="otp6" class="text-danger"></span>
+            <br/>
+
+            <div class="form-group">
+                <input class="btn btn-success" type="submit" value="Verify"/>
+            </div>
+            <br/>
+            <div class="form-group">
+                <button id="resend-otp-link" type="button" class="btn btn-primary">Resend</button>
+            </div>
+        </form>
+    </div>
+</div>
