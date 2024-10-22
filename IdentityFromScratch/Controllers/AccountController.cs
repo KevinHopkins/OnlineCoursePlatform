@@ -410,12 +410,13 @@ public class AccountController : Controller
         otpViewModel.OTPExpiry = DateTime.UtcNow.AddMinutes(10).ToUniversalTime().ToString("o");;
         
         
-        
-        // TODO Generate OTP
+        // TODO User Own Implementation I think therefore next steps are DbContext
+        // TODO Generate OTP - Can this be done in Twillio or use own implementation
+        // TODO https://www.twilio.com/docs/verify/email#set-up-your-sendgrid-account
         // TODO Send email OTP
         // TODO Resend Email Functionality and rewire
         // TODO Reflect back to send by SMS therefore will need phone number too
-        // TODO Will need to move send SMS to Get Action 
+        // TODO Will need to move send SMS to Verify 2FA by SMS Get Action 
         
         return View(otpViewModel);
     }
