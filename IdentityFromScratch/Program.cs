@@ -20,7 +20,6 @@ public class Program
 
         builder.Services.AddIdentity<Member, IdentityRole>(options =>
             {
-// Identity options can be configured here
                 options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
                 options.Password.RequireUppercase = true;
