@@ -7,6 +7,8 @@ public class OneTimePasscode
     public string OTPExpiry { get; set; }
     public string PhoneNumber { get; set; }
     
+    public string Email { get; set; }
+    
     [Required(ErrorMessage = "Missing Digit 1, ")]
     public string otp1 { get; set; }
     

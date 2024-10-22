@@ -342,11 +342,12 @@ public class AccountController : Controller
     }
 
    [HttpGet]
-    public IActionResult VerifyTwoFactor(string phoneNumber)
+    public IActionResult VerifyTwoFactor(string phoneNumber, string email)
     {
         var otpViewModel = new OneTimePasscode();
 
         otpViewModel.PhoneNumber = phoneNumber;
+        otpViewModel.Email = email;
         otpViewModel.OTPExpiry = DateTime.UtcNow.AddMinutes(10).ToUniversalTime().ToString("o");;
         
         return View(otpViewModel);
@@ -399,7 +400,25 @@ public class AccountController : Controller
          return $"{diallingCode}{phoneNumber.Trim().TrimStart('0')}" ;
     }
 
-    
+    [HttpGet]
+    public IActionResult VerifyTwoFactorByEmail(string phoneNumber, string email)
+    {
+        var otpViewModel = new OneTimePasscode();
+
+        otpViewModel.PhoneNumber = phoneNumber;
+        otpViewModel.Email = email;
+        otpViewModel.OTPExpiry = DateTime.UtcNow.AddMinutes(10).ToUniversalTime().ToString("o");;
+        
+        
+        
+        // TODO Generate OTP
+        // TODO Send email OTP
+        // TODO Resend Email Functionality and rewire
+        // TODO Reflect back to send by SMS therefore will need phone number too
+        // TODO Will need to move send SMS to Get Action 
+        
+        return View(otpViewModel);
+    }
     
  
 }

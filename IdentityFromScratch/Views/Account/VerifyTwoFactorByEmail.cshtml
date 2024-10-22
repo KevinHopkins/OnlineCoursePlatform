@@ -46,13 +46,13 @@
         $(document).ready(function () {
         $('#resend-otp-link').click(function () {
         
-            var phoneNumber = '@Model.PhoneNumber.Trim('+')'; 
+            var email = '@Model.Email';
 
             $.ajax({
                 url: '@Url.Action("Resend", "Account")',
                 type: 'POST',
                 data: {
-                    phoneNumber: phoneNumber
+                    email: email
                 },
                 success: function (response) {
                     if (response.success) {
@@ -84,7 +84,7 @@
 
 <div class="col-md-4 offset-md-4">
     <h2>Please Authenticate</h2>
-    <p>A One Time Passcode (OTP) has been sent to your phone.</p>
+    <p>A One Time Passcode (OTP) has been emailed to @Model.Email.</p>
     <p>This will expire after 10 minutes.</p>
     <p>Enter or paste the OTP below to login.</p>
     <div class="card card-body bg-light">
@@ -119,9 +119,6 @@
             <br/>
             <div class="form-group">
                 <button id="resend-otp-link" type="button" class="btn btn-primary">Resend</button>
-            </div>
-            <div class="form-group">
-                <p>Didn't receive the code? <a asp-controller="Account" asp-action="VerifyTwoFactorByEmail" asp-route-email="@Model.Email" asp-route-phoneNumber="@Model.PhoneNumber">Verify by email instead</a></p>
             </div>
         </form>
     </div>
