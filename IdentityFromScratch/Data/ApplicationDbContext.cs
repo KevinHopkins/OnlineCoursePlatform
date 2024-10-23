@@ -11,7 +11,7 @@ public class ApplicationDbContext : IdentityDbContext<Member>
         
     }
     
-    public DbSet<Student> Sudents { get; set; }
+    public DbSet<Member> Members { get; set; }
     
     public DbSet<Enrolment> Enrolments { get; set; }
     

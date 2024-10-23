@@ -34,6 +34,10 @@ namespace IdentityFromScratch.Migrations
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
                     EnrolmentId = table.Column<int>(type: "integer", nullable: false),
+                    FirstName = table.Column<string>(type: "text", nullable: false),
+                    LastName = table.Column<string>(type: "text", nullable: false),
+                    OTP = table.Column<string>(type: "text", nullable: false),
+                    OTPExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -69,22 +73,6 @@ namespace IdentityFromScratch.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Courses", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Sudents",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FirstName = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
-                    OTP = table.Column<string>(type: "text", nullable: false),
-                    OTPExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Sudents", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -194,6 +182,41 @@ namespace IdentityFromScratch.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Enrolments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    MemberId = table.Column<int>(type: "integer", nullable: false),
+                    CourseId = table.Column<int>(type: "integer", nullable: false),
+                    EnrolmentDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PaymentDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    GrossAmount = table.Column<decimal>(type: "numeric", nullable: false),
+                    NetAmount = table.Column<decimal>(type: "numeric", nullable: false),
+                    VATAmount = table.Column<decimal>(type: "numeric", nullable: false),
+                    PaymentProvider = table.Column<int>(type: "integer", nullable: false),
+                    PaymentProviderPaymentId = table.Column<string>(type: "text", nullable: false),
+                    PaymentProviderPayerId = table.Column<string>(type: "text", nullable: false),
+                    PaymentStatus = table.Column<int>(type: "integer", nullable: false),
+                    MemberId1 = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Enrolments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Enrolments_AspNetUsers_MemberId1",
+                        column: x => x.MemberId1,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Enrolments_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Lessons",
                 columns: table => new
                 {
@@ -211,42 +234,6 @@ namespace IdentityFromScratch.Migrations
                         name: "FK_Lessons_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Enrolments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    MemberId = table.Column<int>(type: "integer", nullable: false),
-                    CourseId = table.Column<int>(type: "integer", nullable: false),
-                    EnrolmentDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    PaymentDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    GrossAmount = table.Column<decimal>(type: "numeric", nullable: false),
-                    NetAmount = table.Column<decimal>(type: "numeric", nullable: false),
-                    VATAmount = table.Column<decimal>(type: "numeric", nullable: false),
-                    PaymentProvider = table.Column<int>(type: "integer", nullable: false),
-                    PaymentProviderPaymentId = table.Column<string>(type: "text", nullable: false),
-                    PaymentProviderPayerId = table.Column<string>(type: "text", nullable: false),
-                    PaymentStatus = table.Column<int>(type: "integer", nullable: false),
-                    StudentId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Enrolments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Enrolments_Courses_CourseId",
-                        column: x => x.CourseId,
-                        principalTable: "Courses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Enrolments_Sudents_StudentId",
-                        column: x => x.StudentId,
-                        principalTable: "Sudents",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -283,21 +270,21 @@ namespace IdentityFromScratch.Migrations
                     IsCompleted = table.Column<bool>(type: "boolean", nullable: false),
                     IsStarted = table.Column<bool>(type: "boolean", nullable: false),
                     IsNext = table.Column<bool>(type: "boolean", nullable: false),
-                    StudentId = table.Column<int>(type: "integer", nullable: false)
+                    MemberId1 = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Progress", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Progress_Lessons_LessonId",
-                        column: x => x.LessonId,
-                        principalTable: "Lessons",
+                        name: "FK_Progress_AspNetUsers_MemberId1",
+                        column: x => x.MemberId1,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Progress_Sudents_StudentId",
-                        column: x => x.StudentId,
-                        principalTable: "Sudents",
+                        name: "FK_Progress_Lessons_LessonId",
+                        column: x => x.LessonId,
+                        principalTable: "Lessons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -456,9 +443,9 @@ namespace IdentityFromScratch.Migrations
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Enrolments_StudentId",
+                name: "IX_Enrolments_MemberId1",
                 table: "Enrolments",
-                column: "StudentId");
+                column: "MemberId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Lessons_CourseId",
@@ -476,9 +463,9 @@ namespace IdentityFromScratch.Migrations
                 column: "LessonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Progress_StudentId",
+                name: "IX_Progress_MemberId1",
                 table: "Progress",
-                column: "StudentId");
+                column: "MemberId1");
         }
 
         /// <inheritdoc />
@@ -516,9 +503,6 @@ namespace IdentityFromScratch.Migrations
 
             migrationBuilder.DropTable(
                 name: "Lessons");
-
-            migrationBuilder.DropTable(
-                name: "Sudents");
 
             migrationBuilder.DropTable(
                 name: "Courses");

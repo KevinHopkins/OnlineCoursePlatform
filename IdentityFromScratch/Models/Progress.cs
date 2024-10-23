@@ -6,6 +6,7 @@ public class Progress
     public int Id { get; set; }
     
     public int MemberId { get; set; }
+    
     public int LessonId { get; set; }
     
     public bool IsCompleted { get; set; }
@@ -16,5 +17,5 @@ public class Progress
     
     public Lessons Lesson { get; set; }
     
-    public Student Student { get; set; }
+    public Member Member { get; set; }
 }

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IdentityFromScratch.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241022191039_Initial")]
+    [Migration("20241023075954_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -86,6 +86,9 @@ namespace IdentityFromScratch.Migrations
                     b.Property<int>("MemberId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("MemberId1")
+                        .HasColumnType("text");
+
                     b.Property<decimal>("NetAmount")
                         .HasColumnType("numeric");
 
@@ -106,9 +109,6 @@ namespace IdentityFromScratch.Migrations
                     b.Property<int>("PaymentStatus")
                         .HasColumnType("integer");
 
-                    b.Property<int>("StudentId")
-                        .HasColumnType("integer");
-
                     b.Property<decimal>("VATAmount")
                         .HasColumnType("numeric");
 
@@ -116,7 +116,7 @@ namespace IdentityFromScratch.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.HasIndex("StudentId");
+                    b.HasIndex("MemberId1");
 
                     b.ToTable("Enrolments");
                 });
@@ -383,6 +383,14 @@ namespace IdentityFromScratch.Migrations
                     b.Property<int>("EnrolmentId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
 
@@ -396,6 +404,13 @@ namespace IdentityFromScratch.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
+
+                    b.Property<string>("OTP")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("OTPExpiryTime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");
@@ -941,44 +956,17 @@ namespace IdentityFromScratch.Migrations
                     b.Property<int>("MemberId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("StudentId")
-                        .HasColumnType("integer");
+                    b.Property<string>("MemberId1")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("LessonId");
 
-                    b.HasIndex("StudentId");
+                    b.HasIndex("MemberId1");
 
                     b.ToTable("Progress");
-                });
-
-            modelBuilder.Entity("IdentityFromScratch.Models.Student", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("OTP")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("OTPExpiryTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Sudents");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1121,15 +1109,13 @@ namespace IdentityFromScratch.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("IdentityFromScratch.Models.Student", "Student")
+                    b.HasOne("IdentityFromScratch.Models.Member", "Member")
                         .WithMany("Enrolements")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MemberId1");
 
                     b.Navigation("Course");
 
-                    b.Navigation("Student");
+                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("IdentityFromScratch.Models.Lessons", b =>
@@ -1162,15 +1148,15 @@ namespace IdentityFromScratch.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("IdentityFromScratch.Models.Student", "Student")
+                    b.HasOne("IdentityFromScratch.Models.Member", "Member")
                         .WithMany()
-                        .HasForeignKey("StudentId")
+                        .HasForeignKey("MemberId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Lesson");
 
-                    b.Navigation("Student");
+                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1229,7 +1215,7 @@ namespace IdentityFromScratch.Migrations
                     b.Navigation("Enrolements");
                 });
 
-            modelBuilder.Entity("IdentityFromScratch.Models.Student", b =>
+            modelBuilder.Entity("IdentityFromScratch.Models.Member", b =>
                 {
                     b.Navigation("Enrolements");
                 });

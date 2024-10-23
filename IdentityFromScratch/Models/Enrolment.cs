@@ -26,7 +26,7 @@ public class Enrolment
 
     public PaymentStatus PaymentStatus { get; set; }
     
-    public Student Student { get; set; }
+    public Member Member { get; set; }
     
     public Course Course { get; set; }
 
